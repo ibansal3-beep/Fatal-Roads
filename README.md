@@ -33,8 +33,8 @@ A coordinated geographic crash-point map and weekday-hour heatmap. Selecting a t
 | Member | Email | Focus |
 |---|---|---|
 | Ishita Bansal | ibansal3@asu.edu | Dataset acquisition, cleaning and preparation (data folder), data abstraction, validation, choropleth map (Visualization 1), innovative Fatality Risk Explorer (Visualization 6), data integration|
-| Keenan Tait | ktait1@asu.edu | Heatmap, line chart, categorical bar chart |Temporal heatmap (Visualization 2), monthly line chart (Visualization 3), categorical bar chart (Visualization 4), interactive controls and filtering
-| Arshia Agarwal | asagarw4@asu.edu | Scatterplot, innovative view, interface design |Bubble scatterplot (Visualization 5), dashboard interface design, responsive layout, component integration and UI testing
+| Keenan Tait | ktait1@asu.edu | Heatmap, line chart, categorical bar chart, Temporal heatmap (Visualization 2), monthly line chart (Visualization 3), categorical bar chart (Visualization 4), interactive controls and filtering|
+| Arshia Agarwal | asagarw4@asu.edu | Scatterplot, innovative view, interface design, Bubble scatterplot (Visualization 5), dashboard interface design, responsive layout, component integration and UI testing|
 
 All team members collaborate on integration, testing, documentation, GitHub maintenance, and final reporting.
 
