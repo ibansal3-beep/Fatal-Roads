@@ -10,8 +10,7 @@ Fatal-Roads is an interactive D3.js data story examining where, when, and under 
 How do geographic location, time, environmental conditions, and roadway characteristics relate to the distribution of fatal traffic crashes across the United States in 2024?
 
 ## Dataset
-- **Source:** [NHTSA Fatality Analysis Reporting System](https://www.nhtsa.gov/research-data/fatality-analysis-reporting-system-fars)
-- **Table:** 2024 FARS Accident
+- **Source:** [NHTSA Fatality Analysis Reporting System](https://static.nhtsa.gov/nhtsa/downloads/FARS/2024/National/FARS2024NationalSAS.zip)
 - **Records:** 36,297 fatal crashes
 - **Attributes:** 80
 - **Fatalities recorded:** 39,254
