@@ -29,14 +29,14 @@ The dataset includes crash-level identifiers, locations, dates/times, fatality c
 ### Innovative view: Fatality Risk Explorer
 A coordinated geographic crash-point map and weekday-hour heatmap. Selecting a time interval filters the map, and selecting a state updates temporal summaries. Despite its name, the explorer displays observed fatal crash counts, not exposure-adjusted risk.
 
-## Team and proposed responsibilities
+## Team and responsibilities
 | Member | Email | Focus |
 |---|---|---|
-| Ishita Bansal | ibansal3@asu.edu | Data integration, validation, choropleth map |
-| Keenan Tait | ktait1@asu.edu | Heatmap, line chart, categorical bar chart |
-| Arshia Agarwal | asagarw4@asu.edu | Scatterplot, innovative view, interface design |
+| Ishita Bansal | ibansal3@asu.edu | Dataset acquisition, cleaning and preparation (data folder), data abstraction, validation, choropleth map (Visualization 1), innovative Fatality Risk Explorer (Visualization 6), data integration|
+| Keenan Tait | ktait1@asu.edu | Heatmap, line chart, categorical bar chart |Temporal heatmap (Visualization 2), monthly line chart (Visualization 3), categorical bar chart (Visualization 4), interactive controls and filtering
+| Arshia Agarwal | asagarw4@asu.edu | Scatterplot, innovative view, interface design |Bubble scatterplot (Visualization 5), dashboard interface design, responsive layout, component integration and UI testing
 
-All team members collaborate on integration, testing, documentation, and reporting. Responsibilities should be confirmed by the team.
+All team members collaborate on integration, testing, documentation, GitHub maintenance, and final reporting.
 
 ## Run locally
 1. Clone or download this repository.
@@ -44,8 +44,6 @@ All team members collaborate on integration, testing, documentation, and reporti
 3. Install the **Live Server** extension if needed.
 4. Right-click `index.html` and choose **Open with Live Server**.
 5. The dashboard will open in a browser. No npm installation is required.
-
-> Current status: project scaffold only. The visualization modules are placeholders until implemented. Add the prepared data files to `data/` before wiring up the charts.
 
 ## Folder guide
 - `index.html`: dashboard entry point.
