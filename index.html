@@ -1,35 +1,536 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fatal-Roads | CSE 478</title>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Explore 2024 U.S. fatal traffic crashes using interactive geographic, temporal, and environmental visualizations based on NHTSA FARS data."
+  >
+
+  <title>Fatal Roads | U.S. Traffic Fatalities 2024</title>
+
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" defer></script>
+
+  <!-- D3.js v7 -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"
+    defer
+  ></script>
+
+  <!-- TopoJSON for U.S. state boundaries -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"
+    defer
+  ></script>
+
+  <!-- Dashboard entry point -->
   <script type="module" src="js/main.js"></script>
 </head>
+
 <body>
-  <main class="container">
-    <header>
-      <p class="eyebrow">CSE 478 · Data Visualization · 2024 FARS</p>
-      <h1>Fatal-Roads</h1>
-      <p>Exploring Patterns in U.S. Traffic Fatalities</p>
-    </header>
-    <section class="intro">
-      <h2>Interactive dashboard — under development</h2>
-      <p>Five coordinated visualizations and the Fatality Risk Explorer will be added here.</p>
-      <p id="status" role="status">Loading project scaffold…</p>
+
+  <!-- =====================================
+       HEADER
+       ===================================== -->
+
+  <header class="site-header">
+    <div class="header-inner">
+
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          FR
+        </span>
+
+        <div>
+          <h1>FATAL ROADS</h1>
+          <p>U.S. Traffic Fatalities | 2024</p>
+        </div>
+      </div>
+
+      <nav
+        class="main-nav"
+        aria-label="Main navigation"
+      >
+        <a href="#overview">Overview</a>
+        <a href="#geography">Geography</a>
+        <a href="#time">Time</a>
+        <a href="#conditions">Conditions</a>
+        <a href="#explorer">Risk Explorer</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <main class="dashboard">
+
+    <!-- =====================================
+         OVERVIEW
+         ===================================== -->
+
+    <section
+      id="overview"
+      class="hero"
+      aria-labelledby="overview-title"
+    >
+      <p class="eyebrow">NHTSA FARS · 2024</p>
+
+      <h2 id="overview-title">
+        Understanding America's Fatal Roads
+      </h2>
+
+      <p class="hero-description">
+        Explore where, when, and under what
+        conditions fatal traffic crashes occur
+        across the United States.
+      </p>
+
+      <p class="hero-description">
+        Interactive maps and charts reveal
+        geographic differences, temporal patterns,
+        and recorded crash conditions.
+      </p>
     </section>
-    <section class="dashboard" aria-label="Planned visualizations">
-      <article id="state-map"><h2>State choropleth map</h2><p>Coming soon</p></article>
-      <article id="temporal-heatmap"><h2>Weekday-hour heatmap</h2><p>Coming soon</p></article>
-      <article id="monthly-trend"><h2>Monthly trend</h2><p>Coming soon</p></article>
-      <article id="condition-bar"><h2>Condition comparisons</h2><p>Coming soon</p></article>
-      <article id="bubble-scatter"><h2>State bubble scatterplot</h2><p>Coming soon</p></article>
-      <article id="fatality-explorer"><h2>Fatality Risk Explorer</h2><p>Coming soon</p></article>
+
+    <!-- =====================================
+         KEY PERFORMANCE INDICATORS
+         ===================================== -->
+
+    <section
+      class="kpi-grid"
+      aria-label="Key traffic fatality statistics"
+    >
+
+      <article class="kpi-card">
+        <span>Total Fatal Crashes</span>
+        <strong id="total-crashes">—</strong>
+        <small>
+          Reported fatal crashes in 2024
+        </small>
+      </article>
+
+      <article class="kpi-card">
+        <span>Total Fatalities</span>
+        <strong id="total-fatalities">—</strong>
+        <small>
+          People killed in fatal crashes
+        </small>
+      </article>
+
+      <article class="kpi-card">
+        <span>Geographic Coverage</span>
+        <strong id="total-states">—</strong>
+        <small>
+          States and Washington, D.C.
+        </small>
+      </article>
+
+      <article class="kpi-card">
+        <span>
+          Average Fatalities per Crash
+        </span>
+        <strong id="average-fatalities">—</strong>
+        <small>
+          Fatalities divided by fatal crashes
+        </small>
+      </article>
+
     </section>
-    <footer>Source: NHTSA Fatality Analysis Reporting System (FARS), 2024.</footer>
+
+    <!-- =====================================
+         VISUALIZATION 1: STATE MAP
+         ===================================== -->
+
+    <section
+      id="geography"
+      class="chart-section"
+      aria-labelledby="geography-title"
+    >
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">
+            01 / GEOGRAPHY
+          </p>
+
+          <h2 id="geography-title">
+            Where Do Fatal Crashes Occur?
+          </h2>
+
+          <p>
+            Compare fatal crash and fatality
+            counts across U.S. states.
+          </p>
+        </div>
+
+        <select
+          id="map-metric"
+          aria-label="Select state map metric"
+        >
+          <option value="crashes">
+            Fatal Crashes
+          </option>
+
+          <option value="fatalities">
+            Fatalities
+          </option>
+        </select>
+      </div>
+
+      <div
+        class="chart-card chart-large"
+        id="state-map"
+        aria-label="Interactive U.S. state choropleth map"
+      >
+        <p class="chart-placeholder" role="status">
+          Loading state map...
+        </p>
+      </div>
+
+    </section>
+
+    <!-- =====================================
+         VISUALIZATIONS 2 AND 3: TIME
+         ===================================== -->
+
+    <section
+      id="time"
+      class="chart-section"
+      aria-labelledby="time-title"
+    >
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">
+            02 / TEMPORAL PATTERNS
+          </p>
+
+          <h2 id="time-title">
+            When Do Fatal Crashes Happen?
+          </h2>
+
+          <p>
+            Explore monthly trends and
+            weekday-by-hour crash patterns.
+          </p>
+        </div>
+      </div>
+
+      <div class="chart-grid">
+
+        <!-- Monthly Trend -->
+        <article class="chart-card">
+
+          <div class="chart-title-row">
+            <h3 id="monthly-title">
+              Monthly Crash Trends
+            </h3>
+
+            <select
+              id="monthly-metric"
+              aria-label="Select monthly trend metric"
+            >
+              <option value="crashes">
+                Fatal Crashes
+              </option>
+
+              <option value="fatalities">
+                Fatalities
+              </option>
+            </select>
+          </div>
+
+          <div
+            id="monthly-trend"
+            class="chart-content"
+            aria-labelledby="monthly-title"
+          >
+            <p class="chart-placeholder" role="status">
+              Loading monthly trend...
+            </p>
+          </div>
+
+        </article>
+
+        <!-- Temporal Heatmap -->
+        <article class="chart-card">
+
+          <h3 id="temporal-title">
+            Weekday × Hour Distribution
+          </h3>
+
+          <p>
+            Select a cell to explore a
+            particular weekday and hour.
+          </p>
+
+          <div
+            id="temporal-heatmap"
+            class="chart-content"
+            aria-labelledby="temporal-title"
+          >
+            <p class="chart-placeholder" role="status">
+              Loading temporal heatmap...
+            </p>
+          </div>
+
+        </article>
+
+      </div>
+    </section>
+
+    <!-- =====================================
+         VISUALIZATIONS 4 AND 5: CONDITIONS
+         ===================================== -->
+
+    <section
+      id="conditions"
+      class="chart-section"
+      aria-labelledby="conditions-title"
+    >
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">
+            03 / CRASH CONDITIONS
+          </p>
+
+          <h2 id="conditions-title">
+            What Conditions Are Recorded?
+          </h2>
+
+          <p>
+            Compare crash counts by weather,
+            lighting, and rural or urban
+            classification.
+          </p>
+        </div>
+
+        <select
+          id="condition-type"
+          aria-label="Select crash condition category"
+        >
+          <option value="weather">
+            Weather
+          </option>
+
+          <option value="lighting">
+            Lighting
+          </option>
+
+          <option value="ruralUrban">
+            Rural / Urban
+          </option>
+        </select>
+
+      </div>
+
+      <div class="chart-grid">
+
+        <!-- Condition Bar Chart -->
+        <article class="chart-card">
+
+          <h3 id="condition-chart-title">
+            Crash Conditions
+          </h3>
+
+          <div
+            id="condition-bar"
+            class="chart-content"
+            aria-labelledby="condition-chart-title"
+          >
+            <p class="chart-placeholder" role="status">
+              Loading condition chart...
+            </p>
+          </div>
+
+        </article>
+
+        <!-- Bubble Scatterplot -->
+        <article class="chart-card">
+
+          <h3 id="scatter-title">
+            State Crash Relationships
+          </h3>
+
+          <p>
+            Compare state-level crash counts,
+            fatalities, and crash severity.
+          </p>
+
+          <div
+            id="bubble-scatter"
+            class="chart-content"
+            aria-labelledby="scatter-title"
+          >
+            <p class="chart-placeholder" role="status">
+              Loading bubble scatterplot...
+            </p>
+          </div>
+
+        </article>
+
+      </div>
+    </section>
+
+    <!-- =====================================
+         VISUALIZATION 6: INNOVATIVE EXPLORER
+         ===================================== -->
+
+    <section
+      id="explorer"
+      class="chart-section"
+      aria-labelledby="explorer-title"
+    >
+
+      <div class="section-heading">
+
+        <div>
+          <p class="eyebrow">
+            04 / INNOVATIVE VIEW
+          </p>
+
+          <h2 id="explorer-title">
+            Fatality Risk Explorer
+          </h2>
+
+          <p>
+            Investigate crash locations
+            alongside coordinated weekday
+            and hourly patterns.
+          </p>
+        </div>
+
+        <button
+          id="reset-filters"
+          type="button"
+          aria-label="Reset all dashboard filters"
+        >
+          Reset All Filters
+        </button>
+
+      </div>
+
+      <!-- Explorer state control -->
+      <div class="chart-title-row">
+
+        <label for="explorer-state">
+          Filter crash locations by state
+        </label>
+
+        <select
+          id="explorer-state"
+          aria-label="Select explorer state"
+        >
+          <option value="">
+            All States
+          </option>
+        </select>
+
+      </div>
+
+      <!-- Explorer feedback -->
+      <p
+        id="explorer-feedback"
+        class="explorer-feedback"
+        aria-live="polite"
+      >
+        Select a state or a weekday/hour
+        combination to explore fatal crash
+        patterns.
+      </p>
+
+      <div class="chart-grid explorer-grid">
+
+        <!-- Geographic Crash Map -->
+        <article class="chart-card">
+
+          <h3 id="explorer-map-title">
+            Geographic Crash Locations
+          </h3>
+
+          <p>
+            Crash points show recorded
+            fatal crash locations.
+          </p>
+
+          <div
+            id="explorer-map"
+            class="chart-content"
+            aria-labelledby="explorer-map-title"
+          >
+            <p class="chart-placeholder" role="status">
+              Loading geographic crash map...
+            </p>
+          </div>
+
+        </article>
+
+        <!-- Coordinated Temporal Heatmap -->
+        <article class="chart-card">
+
+          <h3 id="explorer-heatmap-title">
+            Select Weekday and Hour
+          </h3>
+
+          <p>
+            Select a time cell to highlight
+            matching crash locations.
+          </p>
+
+          <div
+            id="explorer-heatmap"
+            class="chart-content"
+            aria-labelledby="explorer-heatmap-title"
+          >
+            <p class="chart-placeholder" role="status">
+              Loading coordinated heatmap...
+            </p>
+          </div>
+
+        </article>
+
+      </div>
+    </section>
+
+    <!-- =====================================
+         DATA SOURCES AND FOOTER
+         ===================================== -->
+
+    <footer class="footer">
+
+      <p>
+        Data source:
+        <a
+          href="https://www.nhtsa.gov/research-data/fatality-analysis-reporting-system-fars"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          NHTSA Fatality Analysis Reporting System (FARS)
+        </a>
+        · 2024
+      </p>
+
+      <p>
+        Counts describe reported fatal crashes
+        and fatalities. They do not measure
+        individual driving risk or establish
+        causal relationships.
+      </p>
+
+      <p>
+        CSE 478 · Data Visualization Project
+      </p>
+
+    </footer>
+
   </main>
+
 </body>
 </html>
-
