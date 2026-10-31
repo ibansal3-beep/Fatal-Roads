@@ -30,7 +30,7 @@ A coordinated geographic crash-point map and weekday-hour heatmap. Selecting a t
 
 ### Team Responsibilities
 
-# Ishita Bansal 
+### Ishita Bansal 
 - Dataset acquisition, cleaning, preprocessing, and validation.
 - Data abstraction and preparation of CSV/JSON files for D3.js.
 - Implementation of the U.S. choropleth map (Visualization 1).
@@ -38,7 +38,7 @@ A coordinated geographic crash-point map and weekday-hour heatmap. Selecting a t
 - Implementation of shared state management and cross-visualization coordination.
 - Data integration, debugging, and performance optimization.
 
-# Keenan Tait 
+### Keenan Tait 
 - Design Sheet 2: Weekday-Hour Heatmap.
 - Design Sheet 3: Monthly Trend Line Chart.
 - Design Sheet 4: Environmental and Roadway Conditions Bar Chart.
@@ -47,7 +47,7 @@ A coordinated geographic crash-point map and weekday-hour heatmap. Selecting a t
 - **Development of interactive filtering controls** for temporal data exploration, including weekday, hour, and month selections.
 - Testing and debugging of assigned visualization modules.
 
-# Arshia Agarwal 
+### Arshia Agarwal 
 - Design Sheet 1: U.S. Choropleth Map.
 - Design Sheet 5: State Comparison Bubble Scatterplot.
 - D3.js implementation of the environmental and roadway conditions bar chart (Visualization 4).
@@ -55,20 +55,20 @@ A coordinated geographic crash-point map and weekday-hour heatmap. Selecting a t
 - Dashboard interface design, CSS styling, and responsive layout.
 - UI testing, usability improvements, and component integration.
 
-## Shared Responsibilities
+### Shared Responsibilities
 - Project planning and visualization design discussions.
 - GitHub collaboration and version control.
 - Integration testing, debugging, and quality assurance.
 - Project documentation, final report, and presentation preparation.
 
-### Run locally
+## Run locally
 1. Clone or download this repository.
 2. Open the folder in Visual Studio Code.
 3. Install the **Live Server** extension if needed.
 4. Right-click `index.html` and choose **Open with Live Server**.
 5. The dashboard will open in a browser. No npm installation is required.
 
-### Folder guide
+## Folder guide
 - `index.html`: dashboard entry point.
 - `css/style.css`: visual styles.
 - `js/main.js`: application entry point and shared state.
@@ -83,7 +83,7 @@ A coordinated geographic crash-point map and weekday-hour heatmap. Selecting a t
 - `assets/`: optional static assets.
 - `screenshots/`: development screenshots for reports.
 
-### Development workflow
+## Development workflow
 Use feature branches (for example, `feature/state-map`) and pull requests to merge into `main`. Review each other's changes and verify that Live Server works after merging.
 
 ## Attribution
