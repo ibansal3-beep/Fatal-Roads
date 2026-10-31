@@ -30,7 +30,7 @@ A coordinated geographic crash-point map and weekday-hour heatmap. Selecting a t
 
 ### Team Responsibilities
 
-## Ishita Bansal 
+# Ishita Bansal 
 - Dataset acquisition, cleaning, preprocessing, and validation.
 - Data abstraction and preparation of CSV/JSON files for D3.js.
 - Implementation of the U.S. choropleth map (Visualization 1).
@@ -38,7 +38,7 @@ A coordinated geographic crash-point map and weekday-hour heatmap. Selecting a t
 - Implementation of shared state management and cross-visualization coordination.
 - Data integration, debugging, and performance optimization.
 
-## Keenan Tait 
+# Keenan Tait 
 - Design Sheet 2: Weekday-Hour Heatmap.
 - Design Sheet 3: Monthly Trend Line Chart.
 - Design Sheet 4: Environmental and Roadway Conditions Bar Chart.
@@ -47,7 +47,7 @@ A coordinated geographic crash-point map and weekday-hour heatmap. Selecting a t
 - **Development of interactive filtering controls** for temporal data exploration, including weekday, hour, and month selections.
 - Testing and debugging of assigned visualization modules.
 
-## Arshia Agarwal 
+# Arshia Agarwal 
 - Design Sheet 1: U.S. Choropleth Map.
 - Design Sheet 5: State Comparison Bubble Scatterplot.
 - D3.js implementation of the environmental and roadway conditions bar chart (Visualization 4).
