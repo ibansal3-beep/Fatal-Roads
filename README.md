@@ -28,23 +28,47 @@ The dataset includes crash-level identifiers, locations, dates/times, fatality c
 ### Innovative view: Fatality Risk Explorer
 A coordinated geographic crash-point map and weekday-hour heatmap. Selecting a time interval filters the map, and selecting a state updates temporal summaries. Despite its name, the explorer displays observed fatal crash counts, not exposure-adjusted risk.
 
-## Team and responsibilities
-| Member | Email | Focus |
-|---|---|---|
-| Ishita Bansal | ibansal3@asu.edu | Dataset acquisition, cleaning and preparation (data folder), data abstraction, validation, choropleth map (Visualization 1), innovative Fatality Risk Explorer (Visualization 6), data integration|
-| Keenan Tait | ktait1@asu.edu | Heatmap, line chart, categorical bar chart, Temporal heatmap (Visualization 2), monthly line chart (Visualization 3), categorical bar chart (Visualization 4), interactive controls and filtering|
-| Arshia Agarwal | asagarw4@asu.edu | Scatterplot, innovative view, interface design, Bubble scatterplot (Visualization 5), dashboard interface design, responsive layout, component integration and UI testing|
+### Team Responsibilities
 
-All team members collaborate on integration, testing, documentation, GitHub maintenance, and final reporting.
+## Ishita Bansal 
+- Dataset acquisition, cleaning, preprocessing, and validation.
+- Data abstraction and preparation of CSV/JSON files for D3.js.
+- Implementation of the U.S. choropleth map (Visualization 1).
+- Development of the innovative Fatality Risk Explorer (Visualization 6).
+- Implementation of shared state management and cross-visualization coordination.
+- Data integration, debugging, and performance optimization.
 
-## Run locally
+## Keenan Tait 
+- Design Sheet 2: Weekday-Hour Heatmap.
+- Design Sheet 3: Monthly Trend Line Chart.
+- Design Sheet 4: Environmental and Roadway Conditions Bar Chart.
+- **D3.js implementation of the weekday-hour heatmap (Visualization 2)**, including color scales, axes, tooltips, and interactive cell selection.
+- **D3.js implementation of the monthly trend line chart (Visualization 3)**, including scales, axes, data binding, and interactive tooltips.
+- **Development of interactive filtering controls** for temporal data exploration, including weekday, hour, and month selections.
+- Testing and debugging of assigned visualization modules.
+
+## Arshia Agarwal 
+- Design Sheet 1: U.S. Choropleth Map.
+- Design Sheet 5: State Comparison Bubble Scatterplot.
+- D3.js implementation of the environmental and roadway conditions bar chart (Visualization 4).
+- D3.js implementation of the state comparison bubble scatterplot (Visualization 5).
+- Dashboard interface design, CSS styling, and responsive layout.
+- UI testing, usability improvements, and component integration.
+
+## Shared Responsibilities
+- Project planning and visualization design discussions.
+- GitHub collaboration and version control.
+- Integration testing, debugging, and quality assurance.
+- Project documentation, final report, and presentation preparation.
+
+### Run locally
 1. Clone or download this repository.
 2. Open the folder in Visual Studio Code.
 3. Install the **Live Server** extension if needed.
 4. Right-click `index.html` and choose **Open with Live Server**.
 5. The dashboard will open in a browser. No npm installation is required.
 
-## Folder guide
+### Folder guide
 - `index.html`: dashboard entry point.
 - `css/style.css`: visual styles.
 - `js/main.js`: application entry point and shared state.
@@ -59,7 +83,7 @@ All team members collaborate on integration, testing, documentation, GitHub main
 - `assets/`: optional static assets.
 - `screenshots/`: development screenshots for reports.
 
-## Development workflow
+### Development workflow
 Use feature branches (for example, `feature/state-map`) and pull requests to merge into `main`. Review each other's changes and verify that Live Server works after merging.
 
 ## Attribution
