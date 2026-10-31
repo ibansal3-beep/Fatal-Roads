@@ -28,7 +28,7 @@ The dataset includes crash-level identifiers, locations, dates/times, fatality c
 ### Innovative view: Fatality Risk Explorer
 A coordinated geographic crash-point map and weekday-hour heatmap. Selecting a time interval filters the map, and selecting a state updates temporal summaries. Despite its name, the explorer displays observed fatal crash counts, not exposure-adjusted risk.
 
-### Team Responsibilities
+## Team Responsibilities
 
 ### Ishita Bansal 
 - Dataset acquisition, cleaning, preprocessing, and validation.
