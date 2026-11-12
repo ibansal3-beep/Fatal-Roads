@@ -1,6 +1,5 @@
-
 /**
- * Fatal Roads — Main Dashboard Controller
+ * Fatal Roads — Main Story Controller
  * CSE 478 | NHTSA FARS 2024
  *
  * Responsibilities:
@@ -11,6 +10,8 @@
  * - Coordinate weekday/hour selections
  * - Handle global reset
  * - Report initialization errors
+ * - Support narrative chapter navigation
+ * - Synchronize state selection with the future signature view
  */
 
 import {
@@ -59,6 +60,9 @@ const filters = {
 
 // Prevent callback loops during synchronization.
 let synchronizing = false;
+
+// Storytelling controls do not modify chart rendering.
+let storyObserver = null;
 
 // ----------------------------------------
 // 3. KPI initialization
@@ -196,6 +200,21 @@ function synchronizeState(stateCode) {
       filters.stateCode
     );
 
+    // Keep the future signature selector
+    // synchronized with the other views.
+    const signatureSelect = d3.select(
+      "#signature-state"
+    );
+
+    if (!signatureSelect.empty()) {
+      signatureSelect.property(
+        "value",
+        filters.stateCode === null
+          ? ""
+          : String(filters.stateCode)
+      );
+    }
+
     console.log(
       "[Dashboard] State filter:",
       filters.stateCode ?? "All states"
@@ -287,6 +306,19 @@ function handleExplorerFilters(nextFilters) {
       filters.time?.hour ?? null
     );
 
+    const signatureSelect = d3.select(
+      "#signature-state"
+    );
+
+    if (!signatureSelect.empty()) {
+      signatureSelect.property(
+        "value",
+        filters.stateCode === null
+          ? ""
+          : String(filters.stateCode)
+      );
+    }
+
   } finally {
     synchronizing = false;
   }
@@ -365,6 +397,9 @@ function resetDashboard() {
     d3.select("#condition-type")
       .property("value", "weather");
 
+    d3.select("#signature-state")
+      .property("value", "");
+
     console.log(
       "[Dashboard] All filters reset."
     );
@@ -421,7 +456,139 @@ async function initializeChart(
 }
 
 // ----------------------------------------
-// 12. Dashboard initialization
+// 12. Storytelling navigation
+// ----------------------------------------
+
+function initializeStoryNavigation() {
+  const links = [
+    ...document.querySelectorAll(
+      '.main-nav a[href^="#"]'
+    )
+  ];
+
+  const sections = links
+    .map(link =>
+      document.getElementById(
+        link.getAttribute("href").slice(1)
+      )
+    )
+    .filter(Boolean);
+
+  if (!sections.length) return;
+
+  const markActive = id => {
+    links.forEach(link => {
+      const active =
+        link.getAttribute("href") === `#${id}`;
+
+      link.classList.toggle("active", active);
+
+      if (active) {
+        link.setAttribute(
+          "aria-current",
+          "location"
+        );
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
+  };
+
+  if (!("IntersectionObserver" in window)) {
+    markActive("overview");
+    return;
+  }
+
+  storyObserver?.disconnect();
+
+  storyObserver = new IntersectionObserver(
+    entries => {
+      const visible = entries
+        .filter(entry => entry.isIntersecting)
+        .sort(
+          (a, b) =>
+            b.intersectionRatio -
+            a.intersectionRatio
+        );
+
+      if (visible.length) {
+        markActive(visible[0].target.id);
+      }
+    },
+    {
+      rootMargin: "-15% 0px -55% 0px",
+      threshold: [0, 0.1, 0.25, 0.5]
+    }
+  );
+
+  sections.forEach(section =>
+    storyObserver.observe(section)
+  );
+
+  markActive(
+    location.hash.slice(1) || "overview"
+  );
+}
+
+// ----------------------------------------
+// 13. Signature state selector
+// ----------------------------------------
+
+function initializeSignatureSelector(states) {
+  const selector = d3.select(
+    "#signature-state"
+  );
+
+  if (selector.empty()) return;
+
+  const normalizedStates = states
+    .map(state => ({
+      code: Number(state.state_code),
+      name:
+        state.state_name ??
+        state.statename ??
+        state.name ??
+        `State ${state.state_code}`
+    }))
+    .filter(state =>
+      Number.isFinite(state.code)
+    )
+    .sort((a, b) =>
+      String(a.name).localeCompare(
+        String(b.name)
+      )
+    );
+
+  selector.selectAll("option").remove();
+
+  selector.append("option")
+    .attr("value", "")
+    .text("United States");
+
+  selector.selectAll(
+    "option.signature-state-option"
+  )
+    .data(normalizedStates)
+    .enter()
+    .append("option")
+    .attr(
+      "class",
+      "signature-state-option"
+    )
+    .attr("value", d => d.code)
+    .text(d => d.name);
+
+  selector.on("change", function () {
+    synchronizeState(
+      this.value === ""
+        ? null
+        : Number(this.value)
+    );
+  });
+}
+
+// ----------------------------------------
+// 14. Dashboard initialization
 // ----------------------------------------
 
 async function initializeDashboard() {
@@ -452,6 +619,10 @@ async function initializeDashboard() {
     // Validate totals and populate KPI cards.
     verifyTotals(data.states);
     initializeKPIs(data.states);
+
+    // Populate the signature selector using
+    // the existing state summary data.
+    initializeSignatureSelector(data.states);
 
     // Geographic records are needed only
     // for the coordinated explorer.
@@ -606,6 +777,8 @@ async function initializeDashboard() {
       );
     }
 
+    initializeStoryNavigation();
+
     console.log(
       "[Dashboard] Initialization complete."
     );
@@ -625,7 +798,7 @@ async function initializeDashboard() {
 }
 
 // ----------------------------------------
-// 13. Start dashboard
+// 15. Start dashboard
 // ----------------------------------------
 
 initializeDashboard();
