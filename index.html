@@ -1012,11 +1012,13 @@
         </div>
 
         <p class="story-method-note">
-          This planned custom visualization
-          will combine multiple data
-          attributes using original
-          visual encodings and interactive
-          state comparisons.
+          The Fatality Signature transforms geocoded 2024 fatal crash
+          records into a circular temporal fingerprint. Each ring
+          represents a weekday, and each segment represents an hour
+          of the day. Color intensity shows recorded fatal crash
+          counts. Hover over a segment to examine fatalities per
+          crash and the most common recorded weather and lighting
+          conditions for that weekday-hour combination.
         </p>
 
       </article>
@@ -1024,25 +1026,31 @@
       <aside class="story-insight">
 
         <strong>
-          Why Combine Multiple Dimensions?
+          What Does the Fatality Signature Reveal?
         </strong>
 
         <p>
-          Separate charts help readers
-          examine individual variables.
-          A custom multidimensional
-          visualization can support
-          comparisons of several
-          attributes within one
-          consistent representation.
+          The circular fingerprint shows how recorded fatal crashes
+          are distributed across weekdays and hours. Darker segments
+          indicate combinations with more fatal crashes, making
+          concentrations easier to identify.
         </p>
 
         <p>
-          The final innovative design
-          must use custom D3 marks
-          and encodings rather than
-          simply linking conventional
-          charts.
+          Selecting a state reveals its temporal pattern. Hovering
+          over a segment provides additional information about
+          fatalities, weather, and lighting conditions recorded
+          among those crashes.
+        </p>
+
+        <p>
+          The signature uses geocoded crash records, so its totals
+          may be slightly lower than the statewide totals shown
+          elsewhere. Colors are rescaled for each selection,
+          allowing within-state pattern exploration but not direct
+          color-based comparisons of absolute counts across states.
+          These counts do not measure individual driving risk or
+          establish crash causation.
         </p>
 
       </aside>

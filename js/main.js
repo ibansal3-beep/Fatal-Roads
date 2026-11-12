@@ -316,6 +316,10 @@ function handleExplorerFilters(nextFilters) {
       filters.time?.hour ?? null
     );
 
+    fatalitySignature?.updateState(
+      filters.stateCode
+    );
+
     const signatureSelect = d3.select(
       "#signature-state"
     );
@@ -397,6 +401,7 @@ function resetDashboard() {
     bubbleScatter?.resetZoom();
 
     fatalityExplorer?.reset();
+    fatalitySignature?.updateState(null);
 
     // Reset the Fatality Signature to national view.
     fatalitySignature?.updateState(null);

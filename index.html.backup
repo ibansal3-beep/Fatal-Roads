@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description"
+    content="Fatal Roads: An interactive visual data story exploring where, when, and under what conditions fatal traffic crashes occurred in the United States in 2024.">
+
+  <title>Fatal Roads | The Story Behind America's Fatal Crashes</title>
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Storytelling enhancements.
+       Move these styles to css/style.css later. -->
+  <style>
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 90px;
+    }
+
+    .story-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    #story-progress-fill {
+      width: 0;
+      height: 100%;
+      background: #e97967;
+      transition: width 0.12s linear;
+    }
+
+    .story-chapter {
+      scroll-margin-top: 100px;
+    }
+
+    .story-bridge,
+    .story-conclusion {
+      max-width: 900px;
+      margin: 64px auto;
+      padding: 30px 24px;
+      border-left: 3px solid #e97967;
+    }
+
+    .story-bridge p,
+    .story-conclusion p {
+      line-height: 1.75;
+    }
+
+    .story-insight {
+      margin-top: 20px;
+      padding: 20px 24px;
+      background: rgba(233,121,103,0.07);
+      border-left: 3px solid #e97967;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .story-insight p,
+    .story-method-note,
+    .story-caveat {
+      font-size: 0.92rem;
+      line-height: 1.7;
+      opacity: 0.85;
+    }
+
+    .story-next {
+      margin: 28px 0 12px;
+      line-height: 1.7;
+    }
+
+    .story-next a,
+    .story-text-link {
+      color: #f0a18f;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .story-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 20px;
+      margin-top: 28px;
+    }
+
+    .story-button {
+      display: inline-block;
+      padding: 13px 22px;
+      background: #c95d4d;
+      color: white;
+      border-radius: 7px;
+      text-decoration: none;
+      font-weight: 650;
+    }
+
+    .story-button:hover {
+      background: #e27664;
+    }
+
+    .story-signature-card {
+      min-height: 320px;
+    }
+
+    #fatality-signature {
+      min-height: 220px;
+    }
+
+    #relationships {
+      scroll-margin-top: 100px;
+    }
+
+    .story-section-label {
+      color: #f0a18f;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .story-steps {
+      display: grid;
+      grid-template-columns: repeat(
+        auto-fit, minmax(180px, 1fr)
+      );
+      gap: 14px;
+      margin-top: 25px;
+    }
+
+    .story-step {
+      padding: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 8px;
+    }
+
+    .story-step strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #f0a18f;
+    }
+
+    .story-step p {
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .signature-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .signature-controls label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      #story-progress-fill {
+        transition: none;
+      }
+    }
+  </style>
+
+  <!-- D3.js v7 -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"
+    defer>
+  </script>
+
+  <!-- TopoJSON -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"
+    defer>
+  </script>
+
+  <!-- Existing D3 application -->
+  <script type="module" src="js/main.js"></script>
+</head>
+
+<body>
+
+  <!-- ======================================
+       STORY PROGRESS
+       ====================================== -->
+
+  <div class="story-progress" aria-hidden="true">
+    <div id="story-progress-fill"></div>
+  </div>
+
+  <!-- ======================================
+       HEADER AND NAVIGATION
+       ====================================== -->
+
+  <header class="site-header">
+    <div class="header-inner">
+
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          FR
+        </span>
+
+        <div>
+          <h1>FATAL ROADS</h1>
+          <p>U.S. Traffic Fatalities | 2024</p>
+        </div>
+      </div>
+
+      <nav class="main-nav"
+           aria-label="Story navigation">
+
+        <a href="#overview">Start</a>
+        <a href="#geography">Where</a>
+        <a href="#time">When</a>
+        <a href="#conditions">Conditions</a>
+        <a href="#relationships">Compare</a>
+        <a href="#signature">Synthesis</a>
+        <a href="#explorer">Explore</a>
+
+      </nav>
+    </div>
+  </header>
+
+  <main class="dashboard story-layout"
+        id="main-content">
+
+    <!-- ======================================
+         INTRODUCTION
+         ====================================== -->
+
+    <section
+      id="overview"
+      class="hero"
+      aria-labelledby="overview-title">
+
+      <p class="eyebrow">
+        NHTSA FARS · 2024
+      </p>
+
+      <h2 id="overview-title">
+        36,297 Fatal Crashes.
+        One Year.
+        What Patterns Emerge?
+      </h2>
+
+      <p class="hero-description">
+        In 2024, fatal motor vehicle crashes
+        affected communities across the
+        United States.
+      </p>
+
+      <p class="hero-description">
+        But a national total cannot reveal
+        where these crashes occurred,
+        when they happened, or the
+        circumstances recorded at the scene.
+      </p>
+
+      <p class="hero-description">
+        Fatal Roads follows the evidence
+        through geography, time, recorded
+        conditions, and state-level comparisons
+        to investigate the patterns behind
+        the national numbers.
+      </p>
+
+      <div class="story-actions">
+
+        <a href="#geography"
+           class="story-button">
+          Begin the Story ↓
+        </a>
+
+        <a href="#explorer"
+           class="story-text-link">
+          Explore the Data Yourself
+        </a>
+
+      </div>
+
+      <p class="story-caveat">
+        This story examines recorded fatal
+        crash counts, not individual driving
+        risk or crash causation.
+      </p>
+
+    </section>
+
+    <!-- ======================================
+         NATIONAL OVERVIEW
+         ====================================== -->
+
+    <section
+      class="kpi-grid"
+      aria-label="National fatal crash statistics">
+
+      <article class="kpi-card">
+        <span>Total Fatal Crashes</span>
+        <strong id="total-crashes">—</strong>
+        <small>
+          Reported fatal crashes in 2024
+        </small>
+      </article>
+
+      <article class="kpi-card">
+        <span>Total Fatalities</span>
+        <strong id="total-fatalities">—</strong>
+        <small>
+          People killed in fatal crashes
+        </small>
+      </article>
+
+      <article class="kpi-card">
+        <span>Geographic Coverage</span>
+        <strong id="total-states">—</strong>
+        <small>
+          States and Washington, D.C.
+        </small>
+      </article>
+
+      <article class="kpi-card">
+        <span>
+          Average Fatalities per Crash
+        </span>
+        <strong id="average-fatalities">—</strong>
+        <small>
+          Fatalities divided by fatal crashes
+        </small>
+      </article>
+
+    </section>
+
+    <!-- ======================================
+         CENTRAL STORY QUESTION
+         ====================================== -->
+
+    <section class="story-bridge"
+             aria-labelledby="question-title">
+
+      <p class="eyebrow">
+        THE CENTRAL QUESTION
+      </p>
+
+      <h2 id="question-title">
+        What Do National Totals Hide?
+      </h2>
+
+      <p>
+        A single number summarizes the
+        scale of fatal crashes, but it
+        cannot describe the differences
+        across states, months, hours,
+        or recorded conditions.
+      </p>
+
+      <p>
+        To understand these patterns,
+        we need to examine the data
+        from several perspectives.
+      </p>
+
+      <div class="story-steps">
+
+        <div class="story-step">
+          <strong>01 · Where?</strong>
+          <p>
+            Explore geographic differences.
+          </p>
+        </div>
+
+        <div class="story-step">
+          <strong>02 · When?</strong>
+          <p>
+            Investigate temporal patterns.
+          </p>
+        </div>
+
+        <div class="story-step">
+          <strong>03 · Conditions?</strong>
+          <p>
+            Examine recorded circumstances.
+          </p>
+        </div>
+
+        <div class="story-step">
+          <strong>04 · Comparison</strong>
+          <p>
+            Compare state-level relationships.
+          </p>
+        </div>
+
+        <div class="story-step">
+          <strong>05 · Synthesis</strong>
+          <p>
+            Bring the dimensions together.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================
+         CHAPTER 1: GEOGRAPHY
+         ====================================== -->
+
+    <section
+      id="geography"
+      class="chart-section story-chapter"
+      data-chapter="1"
+      aria-labelledby="geography-title">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="eyebrow">
+            CHAPTER 01 / GEOGRAPHY
+          </p>
+
+          <h2 id="geography-title">
+            Where Do Fatal Crashes Occur?
+          </h2>
+
+          <p>
+            Fatal crashes were recorded
+            across the country, but their
+            totals vary by state.
+          </p>
+
+          <p>
+            The first step is to examine
+            how fatal crashes are distributed
+            geographically and how that
+            picture changes when comparing
+            crashes with fatalities.
+          </p>
+        </div>
+
+        <select
+          id="map-metric"
+          aria-label="Select state map metric">
+
+          <option value="crashes">
+            Fatal Crashes
+          </option>
+
+          <option value="fatalities">
+            Fatalities
+          </option>
+
+        </select>
+
+      </div>
+
+      <!-- EXISTING CHOROPLETH CONTAINER -->
+      <div
+        class="chart-card chart-large"
+        id="state-map"
+        aria-label="Interactive U.S. state choropleth map">
+
+        <p class="chart-placeholder"
+           role="status">
+          Loading state map...
+        </p>
+
+      </div>
+
+      <aside class="story-insight">
+
+        <strong>
+          Reading the Geographic Evidence
+        </strong>
+
+        <p>
+          Darker states represent higher
+          recorded totals for the selected
+          metric. Switch between crashes
+          and fatalities to compare the
+          two measurements.
+        </p>
+
+        <p>
+          These values are not adjusted
+          for population, traffic volume,
+          or miles driven. Higher counts
+          do not necessarily indicate
+          higher individual risk.
+        </p>
+
+      </aside>
+
+      <p class="story-next">
+        Geography reveals where crashes
+        were recorded, but location alone
+        cannot explain their distribution.
+
+        <a href="#time">
+          Next: When do fatal crashes happen? →
+        </a>
+      </p>
+
+    </section>
+
+    <!-- ======================================
+         CHAPTER 2: TEMPORAL PATTERNS
+         ====================================== -->
+
+    <section
+      id="time"
+      class="chart-section story-chapter"
+      data-chapter="2"
+      aria-labelledby="time-title">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="eyebrow">
+            CHAPTER 02 / TEMPORAL PATTERNS
+          </p>
+
+          <h2 id="time-title">
+            When Do Fatal Crashes Happen?
+          </h2>
+
+          <p>
+            Geographic differences tell
+            only part of the story.
+            Fatal crashes also vary
+            across time.
+          </p>
+
+          <p>
+            We examine time at two scales:
+            monthly trends across 2024
+            and recurring weekday-hour
+            patterns.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="chart-grid">
+
+        <!-- EXISTING MONTHLY LINE CHART -->
+        <article class="chart-card">
+
+          <div class="chart-title-row">
+
+            <h3 id="monthly-title">
+              Monthly Crash Trends
+            </h3>
+
+            <select
+              id="monthly-metric"
+              aria-label="Select monthly metric">
+
+              <option value="crashes">
+                Fatal Crashes
+              </option>
+
+              <option value="fatalities">
+                Fatalities
+              </option>
+
+            </select>
+
+          </div>
+
+          <p>
+            How did recorded fatal crash
+            totals change from January
+            through December?
+          </p>
+
+          <div
+            id="monthly-trend"
+            class="chart-content"
+            aria-labelledby="monthly-title">
+
+            <p class="chart-placeholder"
+               role="status">
+              Loading monthly trend...
+            </p>
+
+          </div>
+
+        </article>
+
+        <!-- EXISTING TEMPORAL HEATMAP -->
+        <article class="chart-card">
+
+          <h3 id="temporal-title">
+            Weekday × Hour Distribution
+          </h3>
+
+          <p>
+            Monthly totals hide the
+            repeating patterns within
+            each week.
+          </p>
+
+          <p>
+            Explore which weekday-hour
+            combinations contain more
+            recorded fatal crashes.
+          </p>
+
+          <div
+            id="temporal-heatmap"
+            class="chart-content"
+            aria-labelledby="temporal-title">
+
+            <p class="chart-placeholder"
+               role="status">
+              Loading temporal heatmap...
+            </p>
+
+          </div>
+
+        </article>
+
+      </div>
+
+      <aside class="story-insight">
+
+        <strong>
+          Reading the Temporal Evidence
+        </strong>
+
+        <p>
+          The line chart shows changes
+          across months, while the heatmap
+          shows how recorded crashes are
+          distributed across weekdays
+          and hours.
+        </p>
+
+        <p>
+          Select data points to inspect
+          specific time periods.
+          A higher count indicates more
+          recorded fatal crashes, not
+          necessarily a higher crash rate
+          per trip or mile traveled.
+        </p>
+
+      </aside>
+
+      <p class="story-next">
+        We now know how to examine
+        the distribution across place
+        and time.
+
+        <a href="#conditions">
+          Next: Under what conditions
+          were these crashes recorded? →
+        </a>
+      </p>
+
+    </section>
+
+    <!-- ======================================
+         CHAPTER 3: RECORDED CONDITIONS
+         ====================================== -->
+
+    <section
+      id="conditions"
+      class="chart-section story-chapter"
+      data-chapter="3"
+      aria-labelledby="conditions-title">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="eyebrow">
+            CHAPTER 03 / CRASH CONDITIONS
+          </p>
+
+          <h2 id="conditions-title">
+            What Conditions Are Recorded?
+          </h2>
+
+          <p>
+            The circumstances surrounding
+            a crash add another dimension
+            to the story.
+          </p>
+
+          <p>
+            The FARS dataset records
+            weather, lighting, and
+            rural or urban classification.
+            Comparing these categories
+            helps describe the conditions
+            present during fatal crashes.
+          </p>
+        </div>
+
+        <select
+          id="condition-type"
+          aria-label="Select crash condition category">
+
+          <option value="weather">
+            Weather
+          </option>
+
+          <option value="lighting">
+            Lighting
+          </option>
+
+          <option value="ruralUrban">
+            Rural / Urban
+          </option>
+
+        </select>
+
+      </div>
+
+      <!-- EXISTING CONDITION BAR CHART -->
+      <article class="chart-card">
+
+        <h3 id="condition-chart-title">
+          Recorded Crash Conditions
+        </h3>
+
+        <p>
+          Compare the number of fatal
+          crashes across categories.
+          Use the selector to switch
+          between weather, lighting,
+          and rural/urban classifications.
+        </p>
+
+        <div
+          id="condition-bar"
+          class="chart-content"
+          aria-labelledby="condition-chart-title">
+
+          <p class="chart-placeholder"
+             role="status">
+            Loading condition chart...
+          </p>
+
+        </div>
+
+      </article>
+
+      <aside class="story-insight">
+
+        <strong>
+          An Important Distinction
+        </strong>
+
+        <p>
+          A condition appearing frequently
+          in fatal crash records does not
+          mean that condition caused the
+          crashes.
+        </p>
+
+        <p>
+          For example, comparing the
+          number of crashes in clear
+          and rainy weather does not
+          establish which condition
+          has greater risk without
+          knowing how much driving
+          occurred in each condition.
+        </p>
+
+      </aside>
+
+      <p class="story-next">
+        Conditions describe the
+        circumstances of crashes.
+        Next, we examine how crash
+        and fatality totals relate
+        across states.
+
+        <a href="#relationships">
+          Next: Comparing states →
+        </a>
+      </p>
+
+    </section>
+
+    <!-- ======================================
+         CHAPTER 4: STATE RELATIONSHIPS
+         ====================================== -->
+
+    <section
+      id="relationships"
+      class="chart-section story-chapter"
+      data-chapter="4"
+      aria-labelledby="relationships-title">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="eyebrow">
+            CHAPTER 04 / STATE COMPARISONS
+          </p>
+
+          <h2 id="relationships-title">
+            Do More Fatal Crashes
+            Always Mean More Fatalities?
+          </h2>
+
+          <p>
+            Crash totals and fatality
+            totals describe related,
+            but different, quantities.
+          </p>
+
+          <p>
+            One fatal crash may involve
+            more than one death.
+            Comparing both measurements
+            can reveal differences in
+            average fatalities per crash.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- EXISTING BUBBLE SCATTERPLOT -->
+      <article class="chart-card">
+
+        <h3 id="scatter-title">
+          State Crash Relationships
+        </h3>
+
+        <p>
+          Each bubble represents a state.
+          Compare fatal crashes,
+          recorded fatalities, and
+          average fatalities per crash.
+        </p>
+
+        <div
+          id="bubble-scatter"
+          class="chart-content"
+          aria-labelledby="scatter-title">
+
+          <p class="chart-placeholder"
+             role="status">
+            Loading bubble scatterplot...
+          </p>
+
+        </div>
+
+      </article>
+
+      <aside class="story-insight">
+
+        <strong>
+          Looking Beyond Raw Totals
+        </strong>
+
+        <p>
+          Fatal crashes and fatalities
+          are closely related by definition,
+          but they are not identical.
+          Comparing their relationship
+          helps distinguish the number
+          of crashes from the number
+          of people killed.
+        </p>
+
+        <p>
+          Average fatalities per fatal
+          crash is a descriptive measure.
+          It does not establish the
+          probability of a crash occurring.
+        </p>
+
+      </aside>
+
+      <p class="story-next">
+        So far, each visualization
+        has examined a different
+        part of the dataset.
+
+        <a href="#signature">
+          Next: Bringing the patterns
+          together →
+        </a>
+      </p>
+
+    </section>
+
+    <!-- ======================================
+         CHAPTER 5: INNOVATIVE VIEW
+         ====================================== -->
+
+    <section
+      id="signature"
+      class="chart-section story-chapter"
+      data-chapter="5"
+      aria-labelledby="signature-title">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="eyebrow">
+            CHAPTER 05 / SYNTHESIS
+          </p>
+
+          <h2 id="signature-title">
+            Every State Has a
+            Fatal-Crash Signature
+          </h2>
+
+          <p>
+            The previous chapters examined
+            geography, time, conditions,
+            and fatalities separately.
+          </p>
+
+          <p>
+            But what happens when we
+            combine these dimensions
+            into a single visual
+            representation?
+          </p>
+
+          <p>
+            The Fatality Signature Explorer
+            is designed to help readers
+            compare the composition of
+            recorded fatal crashes
+            across multiple dimensions.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- NEW CUSTOM D3 VISUALIZATION -->
+      <article class="chart-card story-signature-card">
+
+        <div class="chart-title-row">
+
+          <h3 id="signature-chart-title">
+            Fatality Signature Explorer
+          </h3>
+
+          <div class="signature-controls">
+
+            <label for="signature-state">
+              Select State
+            </label>
+
+            <select
+              id="signature-state"
+              aria-label="Choose a state for the signature">
+
+              <option value="">
+                United States
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+        <p>
+          Investigate how temporal,
+          environmental, and
+          fatality-related measures
+          combine into a state-level
+          visual profile.
+        </p>
+
+        <!--
+          New visualization mount point.
+
+          A future js/fatalitySignature.js
+          module will render the custom
+          D3 visualization here.
+
+          The existing js/main.js does
+          not yet implement this view.
+        -->
+
+        <div
+          id="fatality-signature"
+          class="chart-content"
+          aria-labelledby="signature-chart-title">
+
+          <p class="chart-placeholder"
+             role="status">
+            Custom Fatality Signature
+            visualization pending
+            D3 implementation.
+          </p>
+
+        </div>
+
+        <p class="story-method-note">
+          This planned custom visualization
+          will combine multiple data
+          attributes using original
+          visual encodings and interactive
+          state comparisons.
+        </p>
+
+      </article>
+
+      <aside class="story-insight">
+
+        <strong>
+          Why Combine Multiple Dimensions?
+        </strong>
+
+        <p>
+          Separate charts help readers
+          examine individual variables.
+          A custom multidimensional
+          visualization can support
+          comparisons of several
+          attributes within one
+          consistent representation.
+        </p>
+
+        <p>
+          The final innovative design
+          must use custom D3 marks
+          and encodings rather than
+          simply linking conventional
+          charts.
+        </p>
+
+      </aside>
+
+      <p class="story-next">
+        The guided story provides
+        a sequence of questions.
+        You can also investigate
+        the underlying records
+        yourself.
+
+        <a href="#explorer">
+          Continue to the interactive
+          explorer →
+        </a>
+      </p>
+
+    </section>
+
+    <!-- ======================================
+         OPTIONAL EXPLORATION MODE
+         EXISTING LINKED MAP + HEATMAP
+         ====================================== -->
+
+    <section
+      id="explorer"
+      class="chart-section"
+      aria-labelledby="explorer-title">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="eyebrow">
+            OPTIONAL / EXPLORE THE DATA
+          </p>
+
+          <h2 id="explorer-title">
+            Space-Time Crash Explorer
+          </h2>
+
+          <p>
+            The guided story is complete,
+            but the data can be explored
+            in more detail.
+          </p>
+
+          <p>
+            Use the existing coordinated
+            map and temporal heatmap
+            to investigate recorded
+            crash locations across
+            selected states, weekdays,
+            and hours.
+          </p>
+        </div>
+
+        <button
+          id="reset-filters"
+          type="button"
+          aria-label="Reset all dashboard filters">
+
+          Reset All Filters
+
+        </button>
+
+      </div>
+
+      <!-- EXISTING STATE CONTROL -->
+      <div class="chart-title-row">
+
+        <label for="explorer-state">
+          Filter crash locations by state
+        </label>
+
+        <select
+          id="explorer-state"
+          aria-label="Select explorer state">
+
+          <option value="">
+            All States
+          </option>
+
+        </select>
+
+      </div>
+
+      <!-- EXISTING FEEDBACK -->
+      <p
+        id="explorer-feedback"
+        class="explorer-feedback"
+        aria-live="polite">
+
+        Select a state or weekday-hour
+        combination to explore fatal
+        crash patterns.
+
+      </p>
+
+      <div class="chart-grid explorer-grid">
+
+        <!-- EXISTING GEOGRAPHIC MAP -->
+        <article class="chart-card">
+
+          <h3 id="explorer-map-title">
+            Geographic Crash Locations
+          </h3>
+
+          <p>
+            Crash points represent
+            recorded fatal crash
+            locations.
+          </p>
+
+          <div
+            id="explorer-map"
+            class="chart-content"
+            aria-labelledby="explorer-map-title">
+
+            <p class="chart-placeholder"
+               role="status">
+              Loading geographic crash map...
+            </p>
+
+          </div>
+
+        </article>
+
+        <!-- EXISTING LINKED HEATMAP -->
+        <article class="chart-card">
+
+          <h3 id="explorer-heatmap-title">
+            Select Weekday and Hour
+          </h3>
+
+          <p>
+            Select a time cell to
+            highlight matching
+            crash locations.
+          </p>
+
+          <div
+            id="explorer-heatmap"
+            class="chart-content"
+            aria-labelledby="explorer-heatmap-title">
+
+            <p class="chart-placeholder"
+               role="status">
+              Loading coordinated heatmap...
+            </p>
+
+          </div>
+
+        </article>
+
+      </div>
+
+      <aside class="story-insight">
+
+        <strong>
+          Explore With Context
+        </strong>
+
+        <p>
+          Filtering reveals where
+          recorded crashes occurred
+          during a selected time.
+          It does not establish
+          which location or time
+          is inherently more dangerous.
+        </p>
+
+      </aside>
+
+    </section>
+
+    <!-- ======================================
+         STORY CONCLUSION
+         ====================================== -->
+
+    <section
+      id="conclusion"
+      class="story-conclusion"
+      aria-labelledby="conclusion-title">
+
+      <p class="eyebrow">
+        THE TAKEAWAY
+      </p>
+
+      <h2 id="conclusion-title">
+        A National Total Is
+        Only the Beginning
+      </h2>
+
+      <p>
+        Fatal Roads began with one
+        national statistic and asked
+        what that number could not
+        explain.
+      </p>
+
+      <p>
+        Geography revealed differences
+        in recorded crash totals.
+        Temporal visualizations showed
+        how those records could be
+        examined across months,
+        weekdays, and hours.
+      </p>
+
+      <p>
+        Recorded conditions provided
+        additional context, while
+        state-level comparisons
+        distinguished crash totals
+        from the number of fatalities.
+      </p>
+
+      <p>
+        Together, these perspectives
+        demonstrate why a national
+        total is not enough to
+        describe the distribution
+        of fatal crashes.
+      </p>
+
+      <h3>
+        What Can We Conclude?
+      </h3>
+
+      <p>
+        The data supports descriptive
+        comparisons across location,
+        time, and recorded conditions.
+        It does not, by itself,
+        establish causal relationships
+        or determine individual
+        driving risk.
+      </p>
+
+      <p>
+        Understanding these limitations
+        is essential to interpreting
+        fatal crash statistics responsibly.
+      </p>
+
+      <div class="story-actions">
+
+        <a href="#overview"
+           class="story-button">
+          Return to Beginning ↑
+        </a>
+
+        <a href="#explorer"
+           class="story-text-link">
+          Explore the Data Again
+        </a>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================
+         DATA SOURCE AND FOOTER
+         ====================================== -->
+
+    <footer class="footer">
+
+      <p>
+        Data source:
+
+        <a
+          href="https://www.nhtsa.gov/research-data/fatality-analysis-reporting-system-fars"
+          target="_blank"
+          rel="noopener noreferrer">
+
+          NHTSA Fatality Analysis
+          Reporting System (FARS)
+
+        </a>
+
+        · 2024
+      </p>
+
+      <p>
+        Counts describe recorded
+        fatal crashes and fatalities.
+        They do not measure individual
+        driving risk or establish
+        causal relationships.
+      </p>
+
+      <p>
+        CSE 478 · Data Visualization Project
+      </p>
+
+    </footer>
+
+  </main>
+
+  <!-- ======================================
+       STORY PROGRESS SCRIPT
+       Independent of existing D3 modules
+       ====================================== -->
+
+  <script>
+    (() => {
+      const progressBar =
+        document.getElementById(
+          "story-progress-fill"
+        );
+
+      let scheduled = false;
+
+      function updateProgress() {
+        const root = document.documentElement;
+
+        const scrollableHeight = Math.max(
+          1,
+          root.scrollHeight - window.innerHeight
+        );
+
+        const progress = Math.min(
+          100,
+          Math.max(
+            0,
+            (window.scrollY / scrollableHeight) * 100
+          )
+        );
+
+        progressBar.style.width =
+          progress + "%";
+
+        scheduled = false;
+      }
+
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (!scheduled) {
+            scheduled = true;
+            requestAnimationFrame(
+              updateProgress
+            );
+          }
+        },
+        { passive: true }
+      );
+
+      window.addEventListener(
+        "resize",
+        updateProgress
+      );
+
+      updateProgress();
+    })();
+  </script>
+
+</body>
+</html>
