@@ -415,6 +415,124 @@
     </section>
 
     <!-- ======================================
+         DATA ABSTRACTION AND TRANSFORMATION
+         ====================================== -->
+
+    <section
+      id="data-abstraction"
+      class="chart-section"
+      aria-labelledby="abstraction-title">
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">
+            BEFORE THE STORY / UNDERSTANDING THE DATA
+          </p>
+
+          <h2 id="abstraction-title">
+            What Does One Record Represent?
+          </h2>
+
+          <p>
+            The original FARS data is a collection of
+            individual fatal-crash records. Each item
+            represents one crash involving at least
+            one fatality, not one person or one trip.
+          </p>
+        </div>
+      </div>
+
+      <article class="chart-card">
+        <h3>From Crash Records to Visual Evidence</h3>
+
+        <p>
+          <strong>Items:</strong>
+          Individual fatal crashes, identified by a
+          crash case identifier.
+        </p>
+
+        <p>
+          <strong>Categorical attributes:</strong>
+          State, weather, lighting, and rural/urban
+          classification.
+        </p>
+
+        <p>
+          <strong>Temporal attributes:</strong>
+          Month, weekday, and hour. Month and weekday
+          are ordered cyclically; hour follows a
+          repeating 24-hour cycle.
+        </p>
+
+        <p>
+          <strong>Quantitative attributes:</strong>
+          Fatalities per crash and derived crash
+          counts, fatality totals, and average
+          fatalities per fatal crash.
+        </p>
+
+        <p>
+          <strong>Geographic attributes:</strong>
+          Latitude and longitude for geocoded crashes,
+          alongside state identifiers.
+        </p>
+
+        <p>
+          <strong>Transformations:</strong>
+          Crash-level items are grouped into 51
+          state-level records, 12 monthly records,
+          condition-category summaries, and 168
+          weekday-hour combinations (7 days × 24 hours).
+          Each aggregate stores counts or other
+          derived measures for its group.
+        </p>
+
+        <p>
+          <strong>Visual encodings:</strong>
+          The map uses geographic position and color;
+          the temporal charts use ordered positions
+          and color intensity; the scatterplot uses
+          quantitative positions and bubble properties.
+          The Fatality Signature uses weekday rings,
+          hourly angular positions, crash-count color,
+          darkness bands, and severity markers.
+        </p>
+      </article>
+
+      <aside class="story-insight">
+        <strong>Which Records Are Included?</strong>
+
+        <p>
+          The national dataset contains 36,297 fatal
+          crashes and 39,254 fatalities. The national
+          weekday-hour summary includes 36,044 crashes
+          with usable time information.
+        </p>
+
+        <p>
+          The Fatality Signature uses a geocoded subset
+          of 36,127 crashes; 35,894 have valid weekday
+          and hour values for its radial cells.
+        </p>
+
+        <p class="story-caveat">
+          Aggregated counts describe recorded events,
+          not crash probability or individual driving
+          risk. Traffic volume and distance traveled
+          are not included as exposure denominators.
+        </p>
+      </aside>
+
+      <p class="story-next">
+        With the data structure established,
+        <a href="#geography">
+          begin with the geographic distribution →
+        </a>
+      </p>
+
+    </section>
+
+    <!-- ======================================
          CHAPTER 1: GEOGRAPHY
          ====================================== -->
 
@@ -480,27 +598,28 @@
       </div>
 
       <aside class="story-insight">
-
-        <strong>
-          Reading the Geographic Evidence
-        </strong>
+        <strong>Finding 01 — Fatal Crashes Are Geographically Concentrated</strong>
 
         <p>
-          Darker states represent higher
-          recorded totals for the selected
-          metric. Switch between crashes
-          and fatalities to compare the
-          two measurements.
+          Texas recorded 3,774 fatal crashes, followed by
+          California (3,583) and Florida (2,931).
+          Together, these three states accounted for
+          approximately 28.4% of the 36,297 fatal crashes
+          recorded nationwide in 2024.
         </p>
 
         <p>
-          These values are not adjusted
-          for population, traffic volume,
-          or miles driven. Higher counts
-          do not necessarily indicate
-          higher individual risk.
+          These same three states also recorded the highest
+          fatality totals. Select either map metric to
+          investigate how the geographic distribution compares.
         </p>
 
+        <p class="story-caveat">
+          These are absolute counts, not rates adjusted for
+          population, traffic volume, or vehicle miles traveled.
+          Higher totals do not necessarily indicate greater
+          individual driving risk.
+        </p>
       </aside>
 
       <p class="story-next">
@@ -636,28 +755,39 @@
       </div>
 
       <aside class="story-insight">
-
-        <strong>
-          Reading the Temporal Evidence
-        </strong>
+        <strong>Finding 02 — Fatal Crashes Concentrate in Particular Periods</strong>
 
         <p>
-          The line chart shows changes
-          across months, while the heatmap
-          shows how recorded crashes are
-          distributed across weekdays
-          and hours.
+          October recorded the highest monthly total
+          (3,369 fatal crashes), followed by August (3,342)
+          and September (3,277). February had the lowest
+          total (2,498). Monthly totals describe the
+          number of crashes, not the crash rate per day.
         </p>
 
         <p>
-          Select data points to inspect
-          specific time periods.
-          A higher count indicates more
-          recorded fatal crashes, not
-          necessarily a higher crash rate
-          per trip or mile traveled.
+          At the weekday-hour level, Saturday from
+          8:00–8:59 PM recorded 420 fatal crashes,
+          followed by Saturday from 11:00–11:59 PM
+          with 414. Four of the five highest-count
+          weekday-hour combinations occurred on
+          Saturday evenings.
         </p>
 
+        <p class="story-method-note">
+          The monthly chart covers 36,297 fatal crashes.
+          The weekday-hour summary covers 36,044 crashes
+          with usable weekday and hour information;
+          253 records are excluded from that summary.
+          These datasets have different denominators.
+        </p>
+
+        <p class="story-caveat">
+          These counts do not measure driving risk.
+          Differences in traffic exposure, trip frequency,
+          and the number of days in each month are
+          not accounted for.
+        </p>
       </aside>
 
       <p class="story-next">
@@ -760,28 +890,42 @@
       </article>
 
       <aside class="story-insight">
-
-        <strong>
-          An Important Distinction
-        </strong>
+        <strong>Finding 03 — Fatal Crashes Occur Under Many Conditions</strong>
 
         <p>
-          A condition appearing frequently
-          in fatal crash records does not
-          mean that condition caused the
-          crashes.
+          Clear weather was recorded in 27,161 fatal crashes
+          (74.8% of the national total). Rain was recorded
+          in 2,455 crashes (6.8%). The prevalence of clear
+          weather among fatal crashes does not mean that
+          clear weather is more dangerous.
         </p>
 
         <p>
-          For example, comparing the
-          number of crashes in clear
-          and rainy weather does not
-          establish which condition
-          has greater risk without
-          knowing how much driving
-          occurred in each condition.
+          Daylight accounted for 16,386 fatal crashes (45.1%).
+          Categories explicitly classified as dark accounted
+          for 18,066 crashes (49.8%). The remaining records
+          include dawn, dusk, unknown, and other lighting.
         </p>
 
+        <p>
+          Urban locations accounted for 21,527 crashes
+          (59.3%), compared with 14,442 (39.8%) classified
+          as rural. Other or unreported classifications
+          account for the remaining records.
+        </p>
+
+        <p class="story-method-note">
+          Each condition summary covers 36,297 fatal crashes.
+          Percentages use that national total and include
+          unknown or unreported categories in the denominator.
+        </p>
+
+        <p class="story-caveat">
+          Recorded conditions describe circumstances, not
+          causes. Without exposure data showing how much
+          driving occurred under each condition, these
+          counts cannot establish comparative driving risk.
+        </p>
       </aside>
 
       <p class="story-next">
@@ -866,28 +1010,41 @@
       </article>
 
       <aside class="story-insight">
-
-        <strong>
-          Looking Beyond Raw Totals
-        </strong>
+        <strong>Finding 04 — Crash Totals and Fatalities per Crash Tell Different Stories</strong>
 
         <p>
-          Fatal crashes and fatalities
-          are closely related by definition,
-          but they are not identical.
-          Comparing their relationship
-          helps distinguish the number
-          of crashes from the number
-          of people killed.
+          Texas recorded the most fatal crashes (3,774)
+          and fatalities (4,160), averaging 1.102
+          fatalities per fatal crash. California recorded
+          3,583 fatal crashes and 3,876 fatalities,
+          averaging 1.082 fatalities per crash.
         </p>
 
         <p>
-          Average fatalities per fatal
-          crash is a descriptive measure.
-          It does not establish the
-          probability of a crash occurring.
+          Nebraska recorded substantially fewer fatal
+          crashes (223), but averaged 1.126 fatalities
+          per fatal crash. Wisconsin recorded 529 fatal
+          crashes and averaged 1.125 fatalities per crash.
+          Both averages exceeded those of Texas and
+          California.
         </p>
 
+        <p class="story-method-note">
+          Each bubble represents one of 51 jurisdictions
+          (the 50 states and District of Columbia).
+          Average fatalities per fatal crash equals
+          recorded fatalities divided by recorded fatal
+          crashes. The national dataset contains 36,297
+          fatal crashes and 39,254 fatalities.
+        </p>
+
+        <p class="story-caveat">
+          These averages describe outcomes among fatal
+          crashes, not the probability of experiencing a
+          crash or dying while driving. Differences in
+          crash counts and sample sizes also affect how
+          precisely state averages can be compared.
+        </p>
       </aside>
 
       <p class="story-next">
@@ -986,16 +1143,6 @@
           visual profile.
         </p>
 
-        <!--
-          New visualization mount point.
-
-          A future js/fatalitySignature.js
-          module will render the custom
-          D3 visualization here.
-
-          The existing js/main.js does
-          not yet implement this view.
-        -->
 
         <div
           id="fatality-signature"
@@ -1024,35 +1171,48 @@
       </article>
 
       <aside class="story-insight">
-
-        <strong>
-          What Does the Fatality Signature Reveal?
-        </strong>
+        <strong>Finding 05 — Weekend Evenings Shape the National Fatal-Crash Signature</strong>
 
         <p>
-          The circular fingerprint shows how recorded fatal crashes
-          are distributed across weekdays and hours. Darker segments
-          indicate combinations with more fatal crashes, making
-          concentrations easier to identify.
+          The national weekday-hour summary shows a
+          concentration of recorded fatal crashes on
+          Saturday evenings. Saturday from 8:00–8:59 PM
+          recorded 420 fatal crashes, while Saturday
+          from 11:00–11:59 PM recorded 414. Four of the
+          five highest-count weekday-hour combinations
+          occurred on Saturday evenings.
         </p>
 
         <p>
-          Selecting a state reveals its temporal pattern. Hovering
-          over a segment provides additional information about
-          fatalities, weather, and lighting conditions recorded
-          among those crashes.
+          The Fatality Signature brings several dimensions
+          into one radial profile: weekday rings, hourly
+          segments, crash-count intensity, a blue band
+          representing the share recorded in darkness,
+          and pink markers identifying cells that meet
+          a national fatalities-per-crash benchmark.
+          Select a state to investigate how its temporal
+          pattern differs from the national profile.
         </p>
 
-        <p>
-          The signature uses geocoded crash records, so its totals
-          may be slightly lower than the statewide totals shown
-          elsewhere. Colors are rescaled for each selection,
-          allowing within-state pattern exploration but not direct
-          color-based comparisons of absolute counts across states.
-          These counts do not measure individual driving risk or
-          establish crash causation.
+        <p class="story-method-note">
+          The national weekday-hour summary contains
+          36,044 fatal crashes. The signature uses
+          geocoded records: 36,127 crashes overall,
+          of which 35,894 have valid weekday and hour
+          information. These are different subsets.
+          Its colors rescale separately for each state,
+          so color intensity should only be compared
+          within the currently selected profile.
         </p>
 
+        <p class="story-caveat">
+          Pink markers identify cells meeting a national
+          top-10% average-fatalities-per-crash benchmark,
+          subject to a minimum of five crashes per cell.
+          Small samples may produce unstable averages.
+          Neither these markers nor crash concentrations
+          establish driving risk or causation.
+        </p>
       </aside>
 
       <p class="story-next">
@@ -1235,77 +1395,68 @@
       class="story-conclusion"
       aria-labelledby="conclusion-title">
 
-      <p class="eyebrow">
-        THE TAKEAWAY
-      </p>
+      <p class="eyebrow">THE TAKEAWAY</p>
 
       <h2 id="conclusion-title">
-        A National Total Is
-        Only the Beginning
+        A National Total Hides Distinct Patterns
       </h2>
 
       <p>
-        Fatal Roads began with one
-        national statistic and asked
-        what that number could not
-        explain.
+        In 2024, the United States recorded 36,297 fatal
+        crashes and 39,254 fatalities. Those totals are
+        the starting point, not the complete story.
       </p>
 
       <p>
-        Geography revealed differences
-        in recorded crash totals.
-        Temporal visualizations showed
-        how those records could be
-        examined across months,
-        weekdays, and hours.
+        Geographically, Texas, California, and Florida
+        together accounted for approximately 28.4% of
+        recorded fatal crashes nationwide.
       </p>
 
       <p>
-        Recorded conditions provided
-        additional context, while
-        state-level comparisons
-        distinguished crash totals
-        from the number of fatalities.
+        Temporally, four of the five highest-count
+        weekday-hour combinations occurred on Saturday
+        evenings. Recorded conditions also challenged
+        simple assumptions: 74.8% of fatal crashes
+        occurred in clear weather.
       </p>
 
       <p>
-        Together, these perspectives
-        demonstrate why a national
-        total is not enough to
-        describe the distribution
-        of fatal crashes.
-      </p>
-
-      <h3>
-        What Can We Conclude?
-      </h3>
-
-      <p>
-        The data supports descriptive
-        comparisons across location,
-        time, and recorded conditions.
-        It does not, by itself,
-        establish causal relationships
-        or determine individual
-        driving risk.
+        State comparisons revealed another distinction:
+        Texas had the highest number of fatal crashes,
+        but Nebraska and Wisconsin recorded higher
+        average fatalities per fatal crash.
       </p>
 
       <p>
-        Understanding these limitations
-        is essential to interpreting
-        fatal crash statistics responsibly.
+        The Fatality Signature brings these ideas
+        together by combining temporal concentration,
+        lighting, and fatalities per crash into a
+        single visual profile. Its purpose is to
+        support interpretation, not to rank states
+        or times by driving danger.
+      </p>
+
+      <h3>What Can We Conclude?</h3>
+
+      <p>
+        Fatal crashes are unevenly distributed across
+        locations, times, and recorded conditions.
+        However, these counts do not establish
+        causation or individual driving risk.
+        Comparisons of risk require additional
+        exposure data, such as vehicle miles traveled
+        or traffic volume.
       </p>
 
       <div class="story-actions">
 
-        <a href="#overview"
-           class="story-button">
+        <a href="#overview" class="story-button">
           Return to Beginning ↑
         </a>
 
-        <a href="#explorer"
-           class="story-text-link">
-          Explore the Data Again
+        <a href="#explorer" class="story-text-link">
+          Investigate the Data
         </a>
 
       </div>

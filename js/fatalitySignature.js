@@ -383,30 +383,11 @@ export function renderFatalitySignature({
   const severityLayer = center.append("g")
     .attr("class", "signature-severity");
 
-  // Weekday labels are drawn LAST so that
-  // colored cells cannot cover them.
+  // Weekday names are displayed in the ring key below.
+  // Avoid overlapping text inside the radial visualization.
   const dayLabelLayer = center.append("g")
     .attr("class", "signature-day-labels")
     .style("pointer-events", "none");
-
-  const dayLabels = dayLabelLayer
-    .selectAll("text")
-    .data(DAYS)
-    .join("text")
-    .attr("x", (_, index) =>
-      innerRadius +
-      (index + 0.5) * ringWidth
-    )
-    .attr("y", 0)
-    .attr("text-anchor", "middle")
-    .attr("dominant-baseline", "middle")
-    .attr("font-size", "10")
-    .attr("font-weight", "800")
-    .attr("fill", "#ffffff")
-    .attr("stroke", "#0f172a")
-    .attr("stroke-width", "3")
-    .attr("paint-order", "stroke")
-    .text(day => day.slice(0, 3));
 
   // ----------------------------------------
   // Center summary
@@ -791,7 +772,6 @@ export function renderFatalitySignature({
 
     // Raise labels above all visual marks.
     dayLabelLayer.raise();
-    dayLabels.raise();
 
     showDefaultDetail();
 
