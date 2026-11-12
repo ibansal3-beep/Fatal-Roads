@@ -5,13 +5,13 @@
  * Responsibilities:
  * - Load and validate datasets
  * - Initialize KPI cards
- * - Render all six visualizations
+ * - Render existing D3 visualizations
+ * - Render the Fatality Signature
  * - Coordinate state selections
  * - Coordinate weekday/hour selections
  * - Handle global reset
  * - Report initialization errors
  * - Support narrative chapter navigation
- * - Synchronize state selection with the future signature view
  */
 
 import {
@@ -26,6 +26,7 @@ import { renderMonthlyTrend } from "./monthlyTrend.js";
 import { renderConditionBar } from "./conditionBar.js";
 import { renderBubbleScatter } from "./bubbleScatter.js";
 import { renderFatalityExplorer } from "./fatalityExplorer.js";
+import { renderFatalitySignature } from "./fatalitySignature.js";
 
 // ----------------------------------------
 // 1. Project reference totals
@@ -49,6 +50,7 @@ let monthlyTrend = null;
 let conditionBar = null;
 let bubbleScatter = null;
 let fatalityExplorer = null;
+let fatalitySignature = null;
 
 // Shared dashboard filter state.
 const filters = {
@@ -200,8 +202,12 @@ function synchronizeState(stateCode) {
       filters.stateCode
     );
 
-    // Keep the future signature selector
-    // synchronized with the other views.
+    // Update the radial Fatality Signature.
+    fatalitySignature?.updateState(
+      filters.stateCode
+    );
+
+    // Synchronize signature dropdown.
     const signatureSelect = d3.select(
       "#signature-state"
     );
@@ -301,6 +307,10 @@ function handleExplorerFilters(nextFilters) {
       filters.stateCode
     );
 
+    fatalitySignature?.updateState(
+      filters.stateCode
+    );
+
     temporalHeatmap?.setSelectedCell(
       filters.time?.weekday ?? null,
       filters.time?.hour ?? null
@@ -387,6 +397,9 @@ function resetDashboard() {
     bubbleScatter?.resetZoom();
 
     fatalityExplorer?.reset();
+
+    // Reset the Fatality Signature to national view.
+    fatalitySignature?.updateState(null);
 
     d3.select("#map-metric")
       .property("value", "crashes");
@@ -545,6 +558,7 @@ function initializeSignatureSelector(states) {
     .map(state => ({
       code: Number(state.state_code),
       name:
+        state.state ??
         state.state_name ??
         state.statename ??
         state.name ??
@@ -624,8 +638,7 @@ async function initializeDashboard() {
     // the existing state summary data.
     initializeSignatureSelector(data.states);
 
-    // Geographic records are needed only
-    // for the coordinated explorer.
+    // Geographic records support the signature and explorer.
     let geographicData = null;
 
     try {
@@ -733,6 +746,27 @@ async function initializeDashboard() {
         }
       )
     );
+
+    // ------------------------------------
+    // Initialize Fatality Signature
+    // ------------------------------------
+
+    if (geographicData) {
+      fatalitySignature = await initializeChart(
+        "Fatality Signature",
+        "#fatality-signature",
+        () => renderFatalitySignature({
+          data: geographicData,
+          container: "#fatality-signature",
+          stateCode: filters.stateCode
+        })
+      );
+    } else {
+      showChartError(
+        "#fatality-signature",
+        "Geographic crash data unavailable."
+      );
+    }
 
     // ------------------------------------
     // Initialize coordinated explorer
