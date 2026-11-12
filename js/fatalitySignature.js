@@ -26,7 +26,7 @@ const DAYS = [
 
 const TWO_PI = Math.PI * 2;
 
-const SEVERITY_THRESHOLD = 1.15;
+const SEVERITY_TOP_FRACTION = 0.10;
 const MIN_SEVERITY_SAMPLE = 5;
 
 const COLORS = {
@@ -69,19 +69,51 @@ function normalizeDay(row) {
 }
 
 function validHour(row) {
+  if (
+    row.hour === null ||
+    row.hour === undefined ||
+    String(row.hour).trim() === ""
+  ) {
+    return false;
+  }
+
   const hour = Number(row.hour);
 
   return Number.isInteger(hour) &&
     hour >= 0 &&
-    hour <= 23;
+    hour <= 23 &&
+    Number.isInteger(row.hourIndex) &&
+    row.hourIndex >= 0 &&
+    row.hourIndex <= 23;
 }
 
-function isDark(lighting) {
+function classifyLighting(lighting) {
   const value = String(
     lighting ?? ""
   ).trim().toLowerCase();
 
-  return value.startsWith("dark");
+  if (
+    !value ||
+    value === "reported as unknown" ||
+    value === "not reported" ||
+    value === "other"
+  ) {
+    return "unknown";
+  }
+
+  if (value.startsWith("dark")) {
+    return "dark";
+  }
+
+  if (
+    value === "daylight" ||
+    value === "dawn" ||
+    value === "dusk"
+  ) {
+    return "not-dark";
+  }
+
+  return "unknown";
 }
 
 function mostCommon(rows, field) {
@@ -104,7 +136,7 @@ function buildCells(rows) {
     .map(row => ({
       ...row,
       dayIndex: normalizeDay(row),
-      hourIndex: Number(row.hour),
+      hourIndex: row.hour == null ? null : Number(row.hour),
       fatalitiesValue: Number(row.fatalities)
     }))
     .filter(row =>
@@ -135,20 +167,11 @@ function buildCells(rows) {
         );
 
         const darkCrashes = observations.filter(
-          row => isDark(row.lighting)
+          row => classifyLighting(row.lighting) === "dark"
         ).length;
 
         const knownLighting = observations.filter(
-          row => {
-            const value = String(
-              row.lighting ?? ""
-            ).trim().toLowerCase();
-
-            return value &&
-              !value.includes("unknown") &&
-              !value.includes("not reported") &&
-              !value.includes("other");
-          }
+          row => classifyLighting(row.lighting) !== "unknown"
         ).length;
 
         const averageFatalities = crashes
@@ -455,7 +478,7 @@ export function renderFatalitySignature({
   addLegendItem(
     encodingLegend,
     COLORS.accent,
-    "Pink dot: ≥1.15 fatalities/crash (at least 5 crashes)",
+    "Pink dot: national top-10% severity benchmark (≥5 crashes)",
     true
   );
 
@@ -576,6 +599,26 @@ export function renderFatalitySignature({
   // ----------------------------------------
   // State updates
   // ----------------------------------------
+
+  // National reference benchmark, calculated once.
+  // State selections use the same severity threshold.
+  const nationalCells = buildCells(data).cells;
+
+  const nationalSeverityValues = nationalCells
+    .filter(cell => cell.crashes >= MIN_SEVERITY_SAMPLE)
+    .map(cell => cell.averageFatalities)
+    .sort((a, b) => b - a);
+
+  const topCellCount = Math.max(
+    1,
+    Math.round(
+      nationalSeverityValues.length * SEVERITY_TOP_FRACTION
+    )
+  );
+
+  const severityThreshold = nationalSeverityValues.length
+    ? nationalSeverityValues[topCellCount - 1]
+    : Infinity;
 
   let selectedStateCode = stateCode;
 
@@ -699,7 +742,7 @@ export function renderFatalitySignature({
       cell =>
         cell.crashes >= MIN_SEVERITY_SAMPLE &&
         cell.averageFatalities >=
-          SEVERITY_THRESHOLD
+          severityThreshold
     );
 
     severityLayer
