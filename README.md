@@ -1,91 +1,128 @@
-
 # Fatal-Roads
 
 **Exploring Patterns in U.S. Traffic Fatalities**  
-CSE 478 — Data Visualization | Fall 2026
+**CSE 478 — Data Visualization | Fall 2026**
 
 ## Project Overview
 
-Fatal-Roads is an interactive D3.js dashboard exploring where, when, and under what conditions fatal motor vehicle crashes occurred across the United States in 2024.
+Fatal-Roads is an interactive [D3.js](https://d3js.org/) dashboard exploring **where, when, and under what conditions fatal motor vehicle crashes occurred across the United States in 2024**.
 
-Using data from the National Highway Traffic Safety Administration (NHTSA) Fatality Analysis Reporting System (FARS), the project presents six interactive visualizations highlighting geographic distributions, temporal patterns, environmental conditions, and crash severity.
+Using the National Highway Traffic Safety Administration (NHTSA) Fatality Analysis Reporting System (FARS), the dashboard presents five primary visualizations and an innovative sixth linked view. Together, they support exploration of geographic distributions, temporal patterns, environmental and roadway conditions, and crash severity.
 
-The visualizations describe observed patterns and associations rather than causal relationships or exposure-adjusted risk.
+**Interpretation note:** These visualizations show observed fatal crash counts and associations—not causes or exposure-adjusted crash risk.
 
 ## Research Question
 
-How do geographic location, time, environmental conditions, and roadway characteristics relate to the distribution of fatal traffic crashes across the United States in 2024?
+> How do geographic location, time, environmental conditions, and roadway characteristics relate to the distribution of fatal traffic crashes across the United States in 2024?
 
 ## Dataset
 
-- **Source:** [NHTSA FARS 2024](https://static.nhtsa.gov/nhtsa/downloads/FARS/2024/National/FARS2024NationalCSV.zip)
-- **Fatal crashes:** 36,297
-- **Fatalities recorded:** 39,254
-- **Original attributes:** 80
-- **Valid geographic records:** 36,127
-- **Geographic coverage:** 50 states and Washington, D.C.
+| Measure | Value |
+| --- | ---: |
+| Source | [NHTSA FARS 2024 National CSV](https://static.nhtsa.gov/nhtsa/downloads/FARS/2024/National/FARS2024NationalCSV.zip) |
+| Fatal crash records | 36,297 |
+| Recorded fatalities | 39,254 |
+| Original attributes | 80 |
+| Records with valid geographic coordinates | 36,127 |
+| Geographic coverage | 50 states and Washington, D.C. |
 
-The dataset includes crash identifiers, geographic coordinates, dates and times, fatality counts, weather, lighting, and roadway classifications.
+The accident-level dataset includes crash identifiers, coordinates, dates and times, fatality counts, weather, lighting, and roadway classifications. **Each accident-level record represents a fatal crash, not an individual fatality.**
 
 ### Data Preprocessing
 
-The original FARS accident-level data was cleaned, validated, and transformed into visualization-ready CSV and JSON files.
+The original FARS data was cleaned, validated, and transformed into visualization-ready CSV and JSON files. Processing included:
 
-Processing included:
 - Selecting relevant crash-level attributes.
-- Cleaning and validating numeric and categorical fields.
+- Cleaning numeric and categorical fields and handling missing or unknown values.
 - Standardizing geographic and temporal attributes.
-- Aggregating crashes and fatalities by state, month, weekday, hour, and roadway conditions.
-- Validating geographic coordinates for map-based visualizations.
-- Computing derived metrics such as fatalities per crash.
-- Preparing processed datasets for D3.js.
+- Aggregating crash and fatality counts by state, month, weekday, hour, and recorded conditions.
+- Validating latitude and longitude for geographic visualizations.
+- Computing derived metrics, including average fatalities per crash.
+- Preparing processed datasets for efficient loading with D3.js.
 
-Missing and unknown values were handled according to each visualization's requirements. Of the 36,127 geographic records, 233 have missing hour values, which were preserved rather than assigned an incorrect time.
+Of the **36,127 records with valid geographic coordinates**, **233 have missing hour values**. These were preserved as missing rather than assigned an artificial time. Analyses requiring a known hour exclude those records as appropriate; geographic analyses can still include them.
 
-Crash counts are not normalized by population or vehicle miles traveled.
+**Important:** Crash counts are not normalized by population, traffic volume, or vehicle miles traveled.
 
 ## Implemented Visualizations
 
 ### 1. U.S. Choropleth Map
-Displays state-level fatal crash and fatality distributions using a sequential color scale. Supports metric switching, interactive tooltips, state selection, and geographic filtering.
+
+A state-level map showing the distribution of fatal crashes and fatalities through a sequential color scale. Users can switch metrics, inspect tooltips, and select states for geographic exploration.
 
 ### 2. Weekday-Hour Heatmap
-Visualizes fatal crash patterns across seven weekdays and 24 hours. Supports interactive cell selection, tooltips, and temporal filtering.
+
+A **7 × 24 heatmap** displaying fatal crash counts by weekday and hour. Cell tooltips and selection support examination of temporal patterns and time-based filtering.
 
 ### 3. Monthly Trend Line Chart
-Shows monthly changes in fatal crashes and fatalities throughout 2024. Includes metric selection, interactive tooltips, and month filtering.
+
+A line chart showing how fatal crash and fatality counts change across the twelve months of 2024. Includes a metric selector, interactive tooltips, and month selection.
 
 ### 4. Environmental and Roadway Conditions Bar Chart
-Compares crash distributions across weather, lighting, and rural/urban roadway categories using interactive bars and categorical filtering.
+
+An interactive categorical bar chart comparing recorded crashes across weather, lighting, and rural/urban classifications. Users can change the displayed condition category and select bars to explore subsets.
 
 ### 5. State Comparison Bubble Scatterplot
-Compares states using fatal crash counts, fatalities, and average fatalities per crash. Includes interactive bubbles, tooltips, and coordinated state selection.
+
+A scatterplot comparing states by **fatal crash count (x-axis)** and **fatalities (y-axis)**, with bubble size encoding **average fatalities per crash**. Tooltips and state selection support comparisons.
 
 ### 6. Fatality Risk Explorer — Innovative Visualization
-Combines a geographic crash-point map with a coordinated weekday-hour heatmap to support interactive spatial-temporal exploration.
 
-Selecting a time interval filters geographic crash locations, while selecting a state updates temporal summaries.
+The Fatality Risk Explorer combines a geographic **crash-point map** with a coordinated **weekday-hour heatmap**:
 
-**Innovation:** Unlike independent charts, the explorer integrates linked geographic and temporal views with bidirectional filtering, allowing users to investigate multidimensional crash patterns through coordinated interactions.
+- Selecting a weekday-hour interval filters the crash locations shown on the map.
+- Selecting a state updates the temporal summaries for that geographic subset.
+- Linked selections allow users to explore how spatial and temporal patterns relate.
+- Reset controls return the explorer to its broader view.
 
-Despite its name, the explorer represents observed fatal crash patterns, not exposure-adjusted risk.
+**What makes it innovative:** Instead of displaying geography and time as independent charts, the explorer connects them through coordinated, bidirectional interactions.
+
+Despite its name, the explorer displays **observed fatal crash patterns**, not exposure-adjusted risk or the probability of a crash for an individual driver.
 
 ## Interactive Features
 
-- State, month, weekday-hour, and condition filtering.
-- Interactive tooltips and metric switching.
-- Coordinated cross-visualization interactions.
-- Shared application state and global filter reset.
+- State, month, weekday-hour, and condition selection and filtering.
+- Hover tooltips with relevant counts and context.
+- Metric switching where supported.
+- Linked geographic and temporal exploration.
+- Shared application state and filter reset controls.
 - Responsive dashboard layout.
+
+Filter behavior depends on the visualization and selected view; not every control necessarily filters every chart.
 
 ## Technologies Used
 
-- **HTML5 and CSS3:** Dashboard structure and responsive styling.
-- **JavaScript:** Application logic and interaction handling.
-- **D3.js v7:** Interactive maps, charts, and data binding.
-- **CSV/JSON:** Processed visualization datasets.
-- **GitHub:** Version control and collaboration.
-- **VS Code Live Server:** Local development and testing.
+| Technology | Purpose |
+| --- | --- |
+| HTML5 | Dashboard structure |
+| CSS3 | Styling and responsive layout |
+| JavaScript | Application logic and interactions |
+| D3.js v7 | Data-driven charts, maps, scales, and interactions |
+| CSV and JSON | Processed visualization data |
+| Git and GitHub | Version control and collaboration |
+| Visual Studio Code + Live Server | Local development and testing |
+
+## Repository Structure
+
+```text
+Fatal-Roads/
+├── index.html                 # Dashboard entry point
+├── css/
+│   └── style.css             # Dashboard styling
+├── js/
+│   ├── main.js               # Application initialization and shared state
+│   ├── dataLoader.js         # Dataset loading and validation
+│   ├── stateMap.js           # U.S. choropleth map
+│   ├── temporalHeatmap.js    # Weekday-hour heatmap
+│   ├── monthlyTrend.js       # Monthly line chart
+│   ├── conditionBar.js       # Conditions bar chart
+│   ├── bubbleScatter.js      # State comparison scatterplot
+│   └── fatalityExplorer.js   # Coordinated geographic-temporal explorer
+├── data/                      # Processed CSV/JSON datasets
+├── assets/                    # Static assets
+├── screenshots/               # Dashboard screenshots
+└── README.md                  # Project documentation
+```
 
 ## Run Locally
 
@@ -93,29 +130,30 @@ Despite its name, the explorer represents observed fatal crash patterns, not exp
 
    ```bash
    git clone https://github.com/ibansal3-beep/Fatal-Roads.git
+   cd Fatal-Roads
    ```
 
-2. Open the project folder in Visual Studio Code.
-3. Install the **Live Server** extension if needed.
+2. Open the folder in **Visual Studio Code**.
+3. Install the **Live Server** extension if it is not already installed.
 4. Right-click `index.html` and select **Open with Live Server**.
-5. Explore the dashboard in your browser.
+5. Explore the dashboard in the browser window that opens.
 
-No npm installation or backend server is required. Use Live Server instead of opening `index.html` directly through a `file://` URL.
+**No npm installation or backend application is required.** Use a local web server rather than opening `index.html` directly through a `file://` URL, since browser security restrictions can prevent data files from loading correctly.
 
 ## Testing and Validation
 
-The completed dashboard was tested for:
+As reported by the project team, final testing covered:
 
-- Successful loading and initialization of all six visualizations.
-- Correct CSV record counts and dataset totals.
-- Missing values and invalid numeric data.
-- JavaScript errors during initialization and interactions.
+- Loading and initialization of all six visualizations.
+- Dataset totals, record counts, and missing-value handling.
+- Numeric validation and geographic coordinate handling.
+- JavaScript errors during initialization and user interactions.
 - Scales, axes, legends, tooltips, and visual consistency.
-- State, temporal, and categorical filtering.
-- Global filter reset functionality.
-- Responsive behavior across desktop, tablet, and mobile viewports.
+- Geographic, temporal, and categorical selections.
+- Linked-view behavior and filter resets.
+- Responsive layouts on desktop, tablet, and mobile viewports.
 
-All six visualizations were functionally reviewed and approved during final testing.
+The team reports that all six visualizations were functionally reviewed during final testing.
 
 ## Team Responsibilities
 
@@ -130,15 +168,15 @@ All six visualizations were functionally reviewed and approved during final test
 
 ### Keenan Tait — 33%
 
-- Design Sheets 2, 3, and 4: Weekday-Hour Heatmap, Monthly Trend Line Chart, and Environmental and Roadway Conditions Bar Chart.
-- D3.js implementation of the weekday-hour heatmap (Visualization 2), including color scales, axes, tooltips, and interactive cell selection.
-- D3.js implementation of the monthly trend line chart (Visualization 3), including scales, axes, data binding, and interactive tooltips.
-- Development of interactive filtering controls for temporal data exploration, including weekday, hour, and month selections.
+- Design Sheets 2, 3, and 4: weekday-hour heatmap, monthly trend line chart, and environmental/roadway conditions bar chart.
+- D3.js implementation of the weekday-hour heatmap (Visualization 2), including scales, axes, tooltips, and cell selection.
+- D3.js implementation of the monthly trend line chart (Visualization 3), including scales, data binding, and tooltips.
+- Development of temporal filtering controls, including weekday, hour, and month selections.
 - Testing and debugging of assigned visualization modules.
 
 ### Arshia Agarwal — 33%
 
-- Design Sheets 1 and 5: U.S. Choropleth Map and State Comparison Bubble Scatterplot.
+- Design Sheets 1 and 5: U.S. choropleth map and state comparison bubble scatterplot.
 - D3.js implementation of the environmental and roadway conditions bar chart (Visualization 4).
 - D3.js implementation of the state comparison bubble scatterplot (Visualization 5).
 - Dashboard interface design, CSS styling, and responsive layout.
@@ -153,14 +191,16 @@ All six visualizations were functionally reviewed and approved during final test
 
 ## Limitations and Future Improvements
 
-The dataset contains only fatal crashes and covers a single year. Crash counts are not adjusted for population or traffic exposure, and observed patterns should not be interpreted as causal relationships.
+The FARS dataset includes **fatal crashes only**, so the dashboard does not describe all motor vehicle crashes. The analysis covers **2024 only** and cannot establish long-term trends. Missing or unknown fields can affect particular visualizations. Counts are not adjusted for traffic exposure or population; states or time periods with more recorded crashes are not necessarily more dangerous on a per-trip or per-mile basis. The visualizations show associations, not causal relationships.
 
-Future improvements could include multi-year comparisons, exposure-adjusted crash rates, additional demographic and roadway attributes, and data export functionality.
+Potential extensions include multi-year comparisons, exposure-adjusted rates using documented denominators, additional demographic and roadway attributes, and data export features.
 
 ## Attribution
 
-**Data:** National Highway Traffic Safety Administration (NHTSA), Fatality Analysis Reporting System (FARS), 2024 Accident table.
+**Data source:** National Highway Traffic Safety Administration (NHTSA), [Fatality Analysis Reporting System (FARS), 2024 National Accident Data](https://static.nhtsa.gov/nhtsa/downloads/FARS/2024/National/FARS2024NationalCSV.zip).
+
+**Visualization library:** [D3.js](https://d3js.org/).
 
 **Course:** CSE 478 — Data Visualization, Fall 2026.
 
-Fatal-Roads is an educational project and is not an official NHTSA product.
+Fatal-Roads is an educational project and is **not an official NHTSA product**.
