@@ -1,0 +1,11 @@
+{
+  "source": "NHTSA FARS 2024 Accident table (user-uploaded accident.csv)",
+  "crashes": 36297,
+  "fatalities": 39254,
+  "invalid_hours": 253,
+  "invalid_coordinates": 170,
+  "valid_geographic_points": 36127,
+  "jurisdictions": 51,
+  "coordinate_rule": "latitude 18\u201372, longitude -180 to -60; coordinate codes outside bounds excluded from geographic dataset",
+  "note": "Crash counts are not exposure-adjusted risk estimates."
+}
