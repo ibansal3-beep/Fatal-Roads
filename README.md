@@ -165,7 +165,7 @@ The following is the agreed project contribution allocation. Review and testing 
 
 ### Ishita Bansal — 40%
 
-- **Complete System Development (30%):** Developed the complete Fatal Roads system.
+- **GitHub System Development (30%):** Developed the complete Fatal Roads system.
 - **Project Storyline Development (5%):** Storyline design and refinement. 
 - **GitHub Deployment (5%):** Creation and handling of project GitHub repository.
 
