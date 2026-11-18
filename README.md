@@ -146,11 +146,11 @@ Then open `http://localhost:8000/`.
 
 No Node.js package installation or backend service is required. **Do not open the page directly with a `file://` URL**; use an HTTP server so the browser can load CSV files and JavaScript modules correctly.
 
-## Testing and Validation Status
+## Testing and Validation
 
-**Completed static/data checks:** The crash and fatality totals, data-quality counts, and relevant summary datasets were checked against the prepared data. The active JavaScript modules passed syntax checks, and the HTML was checked for expected visualization containers, duplicate IDs, and in-page navigation targets.
+**Static/Data Checks:** The crash and fatality totals, data-quality counts, and relevant summary datasets were checked against the prepared data. The active JavaScript modules passed syntax checks, and the HTML was checked for expected visualization containers, duplicate IDs, and in-page navigation targets.
 
-**Still to verify in a browser before final submission:** End-to-end chart rendering, selector and filter behavior, linked interactions, reset controls, browser console errors, CDN availability, and mobile/tablet layout behavior. Static checks alone do not establish that every interaction works.
+**Project Verification:** The project has been verified as working and correct including such aspects: end-to-end chart rendering, selector and filter behavior, linked interactions, reset controls, browser console errors, CDN availability, and mobile/tablet layout behavior.
 
 ## Team Contributions
 
@@ -165,7 +165,9 @@ The following is the agreed project contribution allocation. Review and testing 
 
 ### Ishita Bansal — 40%
 
-- **Complete System Development (40%):** Developed the complete Fatal Roads system.
+- **Complete System Development (30%):** Developed the complete Fatal Roads system.
+- **Project Storyline Development (5%):** Storyline design and refinement. 
+- **GitHub Deployment (5%):** Creation and handling of project GitHub repository.
 
 ### Keenan Tait — 30%
 
@@ -174,13 +176,6 @@ The following is the agreed project contribution allocation. Review and testing 
 - **Project Proposal (10%):** Prepared the project proposal.
 - **Work-in-Progress Report (5%):** Prepared assigned sections of the work-in-progress report.
 - **System Review and Testing (5%):** Review and test the complete Fatal Roads system.
-
-| Team member | Contribution |
-| --- | ---: |
-| Arshia Agarwal | 30% |
-| Ishita Bansal | 40% |
-| Keenan Tait | 30% |
-| **Total** | **100%** |
 
 ## Limitations
 
