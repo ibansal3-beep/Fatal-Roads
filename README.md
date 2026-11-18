@@ -165,9 +165,9 @@ The following is the agreed project contribution allocation. Review and testing 
 
 ### Ishita Bansal — 40%
 
-- **GitHub System Development (30%):** Developed the complete Fatal Roads system.
-- **Project Storyline Development (5%):** Storyline design and refinement. 
-- **GitHub Deployment (5%):** Creation and handling of project GitHub repository.
+- **Technical Development (30%):** Designed the complete Fatal Roads website, implementing D3.js including the: line chart, heatmap, bar chart, scatterplot, and Risk Explorer. As well as handling FARS data processing, interactive filtering, and responsive UI/UX.
+- **Storyline (5%):** Structured visualization sequencing according to the story narrative.
+- **Deployment (5%):** Managed GitHub repository and project codebase.
 
 ### Keenan Tait — 30%
 
